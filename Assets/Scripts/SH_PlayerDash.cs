@@ -8,16 +8,17 @@ public class SH_PlayerDash : MonoBehaviour
     public float dashSpeed = 5;
     public float dashTime = 0.25f;
     Animator anim;
-    // Dash effect
-    public GameObject dashLine;
-    // Dash ParticleSystem
-    public GameObject dashDust;
+    // Dash Line ParticleSystem
+    public ParticleSystem dashLine;
+    // Dash Dust ParticleSystem
+    public ParticleSystem dashDust;
 
     void Start()
     {
         playerMove = GetComponent<SH_PlayerMove>();
         anim = GetComponent<Animator>();
-        dashDust.SetActive(false);  // dash 실행할 때만 활성화
+        dashLine.Stop();
+        dashDust.Stop();
     }
 
     void Update()
@@ -26,15 +27,13 @@ public class SH_PlayerDash : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
         {
             StartCoroutine("Dash");
-            //Transform dashPos = Camera.main.transform;
-            dashLine.SetActive(true);
-            dashDust.SetActive(true);
-            //Instantiate(dashLine, dashPos);
+            dashLine.Play();
+            dashDust.Play();
         }
         else
         {
-            dashLine.SetActive(false);
-            dashDust.SetActive(false);
+            dashLine.Stop();
+            dashDust.Stop();
         }
     }
     IEnumerator Dash()
