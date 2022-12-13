@@ -34,6 +34,7 @@ public class SH_PlayerAttack : MonoBehaviour
     bool canUseSkill2 = true; //스킬2을 사용할 수 있는지 확인하는 변수
     public AudioSource swordSwing;  // Sword Swing Sound
     SH_Weapon weapon;
+    public AudioSource skill2Sound; //레이저 사운드
 
 
 
@@ -53,18 +54,49 @@ public class SH_PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        // Skill1
+
+        #region Attack - 일반 공격
+        // Attack이 재생되지 않을 때만 Attack 입력 되게 하기 (Attack animation 중복 재생 방지)
+        if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        {
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                isSkill = false;
+                isAttack = true;
+                anim.SetTrigger("Attack");
+                // 공격이 enemy에게 닿지 않았을 때만 swordSwing Sound 재생되게 하기
+                if (weapon.isColliding == false && SH_PlayerAttack.instance.anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") == false)
+                {
+                    swordSwing.PlayDelayed(0.25f);
+                }
+            }
+        }
+        //if (Input.GetKeyUp(KeyCode.J))
+        //{
+        //    anim.SetBool("IsRun", true);
+        //    anim.SetFloat("AttackSpeed", 2);  // 처음 속도 설정
+        //    isAttack = false;
+        //    isSkill = false;
+        //}
+
+        //if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        //{
+        //    anim.SetFloat("AttackSpeed", anim.GetFloat("AttackSpeed") - 0.02f);
+        //}
+        #endregion
+
+
+        #region Skill1 - 얼음 공격
         if (Input.GetKey(KeyCode.K) && canUseSkill == true)
         {
             if (SH_PlayerMP.instance.MP > 0)
             {
-                coolTimeTextObject.SetActive(true);
                 isSkill = true;
                 anim.SetTrigger("Skill");
 
-                // 플레이어 MP 줄이기
+                // Player MP -10
                 SH_PlayerMP.instance.UseSkill(10);
-                //StartCoroutine("AttackDelay");
+                coolTimeTextObject.SetActive(true);
                 CoolTimeUseSkill();
             }
             else
@@ -74,9 +106,9 @@ public class SH_PlayerAttack : MonoBehaviour
             }
         }
         //쿨타임시 스킬 불가능 UI 띄우기 //MP가 0이고 쿨타임이 남았을 때 : 아직 스킬을 사용할 수 없습니다로 뜨게 한다
-        if (Input.GetKey(KeyCode.K) && currentCoolTime < 4.9f )
+        if (Input.GetKey(KeyCode.K) && currentCoolTime < 4.9f)
         {
-            if(SH_PlayerMP.instance.MP <=0)
+            if (SH_PlayerMP.instance.MP <= 0)
             {
                 StartCoroutine("MpLack");
             }
@@ -84,60 +116,33 @@ public class SH_PlayerAttack : MonoBehaviour
             {
                 StartCoroutine("SKillLack");
             }
-            
-        }
-
-            // Attack : Attack애니메이터가 재생되지 않을 때만 Attack 입력이 되게 하기 (Attack animation 중복 재생 방지)
-            if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-        {
-            if (Input.GetKeyDown(KeyCode.J))
-            {
-                isSkill = false;
-                isAttack = true;
-                anim.SetTrigger("Attack");
-                // 공격이 enemy에게 닿지 않았을 때만 재생되게 하기
-                if (weapon.isColliding == false && SH_PlayerAttack.instance.anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") == false)
-                {
-                    swordSwing.PlayDelayed(0.25f);
-                }
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.J))
-        {
-            anim.SetBool("IsRun", true);
-            anim.SetFloat("AttackSpeed", 2);  // 처음 속도 설정
-            isAttack = false;
-            isSkill = false;
 
         }
+        #endregion
 
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-        {
-            anim.SetFloat("AttackSpeed", anim.GetFloat("AttackSpeed") - 0.02f);
-        }
+        
 
-        // Skill2
+        #region Skill2 - 레이저 공격
+
         if (Input.GetKeyDown(KeyCode.L) && canUseSkill2 == true)
         {
-            
-            if (SH_PlayerMP.instance.MP - 20 >= 0)
+
+            if (SH_PlayerMP.instance.MP >= 0)
             {
                 coolTimeTextObject2.SetActive(true);
                 isSkill = true;
                 anim.SetTrigger("Skill2");
-                skill2SoundEvent();
+                skill2Sound.Play();
 
-                // 플레이어 MP 줄이기
+                // Player MP -20
                 SH_PlayerMP.instance.UseSkill(20);
-                //StartCoroutine("AttackDelay");
                 CoolTimeUseSkill2();
             }
             else
             {
                 Debug.Log("MP가 부족합니다");
                 StartCoroutine("MpLack");
-            }          
+            }
         }
         if (Input.GetKey(KeyCode.L) && currentCoolTime2 < 9.9f)
         {
@@ -151,6 +156,7 @@ public class SH_PlayerAttack : MonoBehaviour
             }
 
         }
+        #endregion
     }
 
     //MP부족 UI띄우는 코루틴 
@@ -173,18 +179,11 @@ public class SH_PlayerAttack : MonoBehaviour
     // Skill2 애니메이션 이벤트
     public ParticleSystem lr;
     public Transform laserPos;
-    //float attackTime = 3f;
-    //float currentTime;
     public void skill2Event()
     {
         lr.transform.position = laserPos.position;
         lr.transform.forward = transform.forward;
         lr.Play();
-    }
-    public AudioSource skill2Sound; //레이저 사운드
-    public void skill2SoundEvent()
-    {
-        skill2Sound.Play();
     }
 
     public void CoolTimeUseSkill()
@@ -213,7 +212,7 @@ public class SH_PlayerAttack : MonoBehaviour
             skill2Filter.fillAmount = 1; // 스킬 버튼을 가림
             StartCoroutine("CoolTime2");
             currentCoolTime2 = coolTime2;
-            coolTimeText2.text = ""+ coolTime2;
+            coolTimeText2.text = "" + coolTime2;
             StartCoroutine("CoolTimeCounter2");
             canUseSkill2 = false; //스킬을 사용하면 사용할 수 없는 상태로 바꾼다.
         }
@@ -233,7 +232,6 @@ public class SH_PlayerAttack : MonoBehaviour
         }
         canUseSkill = true; //스킬 쿨타임이 끝나면 스킬을 사용할 수 있는 상태로 바꿈
         coolTimeTextObject.SetActive(false);
-
         yield break;
     }
 

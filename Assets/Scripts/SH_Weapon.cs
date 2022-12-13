@@ -11,11 +11,11 @@ public class SH_Weapon : MonoBehaviour
     public TrailRenderer skillTrail;
     // weapon collider
     public Collider weponCol;
+    List<Collider> lists = new List<Collider>();
 
 
     private void Update()
     {
-      //  isColliding = false;
         // 칼 collider & Trail Renderer default = 비활성화
         weponCol.enabled = false;
         attackTrail.enabled = false;
@@ -38,7 +38,7 @@ public class SH_Weapon : MonoBehaviour
             skillTrail.enabled = true;
         }
     }
-    List<Collider> lists = new List<Collider>();
+    
     private void OnTriggerEnter(Collider other)
     {
         if (lists.Contains(other) == true) return;
@@ -58,21 +58,22 @@ public class SH_Weapon : MonoBehaviour
             if (other.gameObject.tag == "Enemy1")
             {
                 // Camera Shake
-                SSH_NewCamera.Instance.OnShakeCamera(0.5f, 0.3f); 
-                // Damage 주기
-                SSH_Enemybeta senemy = other.gameObject.GetComponent<SSH_Enemybeta>();
+                SSH_NewCamera.Instance.OnShakeCamera(0.5f, 0.3f);
+                // Enemy Hit Animation
                 other.GetComponentInChildren<Animator>().SetTrigger("GetHit");
-                senemy.AddDamage(1);
+                // Add Damage
+                SSH_Enemybeta enemy = other.gameObject.GetComponent<SSH_Enemybeta>();
+                enemy.AddDamage(1);
             }
-
             else if (other.gameObject.tag == "Enemy2")
             {
                 // Camera Shake
                 SSH_NewCamera.Instance.OnShakeCamera(0.5f, 0.3f);
-                // Damage 주기
-                SSH_Enemy2 senemy2 = other.gameObject.GetComponent<SSH_Enemy2>();
+                // Enemy Hit Animation
                 other.GetComponentInChildren<Animator>().SetTrigger("GetHit");
-                senemy2.AddDamage(1);
+                // Add Damage
+                SSH_Enemy2 enemy2 = other.gameObject.GetComponent<SSH_Enemy2>();
+                enemy2.AddDamage(1);
             }
         }
 
@@ -83,20 +84,21 @@ public class SH_Weapon : MonoBehaviour
             {
                 // Camera Shake
                 SSH_NewCamera.Instance.OnShakeCamera(0.5f, 0.3f);
-                // Damage 주기
-                SSH_Enemybeta senemy = other.gameObject.GetComponent<SSH_Enemybeta>();
+                // Enemy Hit Animation
                 other.GetComponentInChildren<Animator>().SetTrigger("GetHit");
-                senemy.AddDamage(3);
+                // Add Damage
+                SSH_Enemybeta enemy = other.gameObject.GetComponent<SSH_Enemybeta>();
+                enemy.AddDamage(3);
             }
-
             else if (other.gameObject.tag == "Enemy2")
             {
                 // Camera Shake
                 SSH_NewCamera.Instance.OnShakeCamera(0.5f, 0.3f);
-                // Damage 주기
-                SSH_Enemy2 senemy2 = other.gameObject.GetComponent<SSH_Enemy2>();
+                // Enemy Hit Animation
                 other.GetComponentInChildren<Animator>().SetTrigger("GetHit");
-                senemy2.AddDamage(3);
+                // Add Damage
+                SSH_Enemy2 enemy2 = other.gameObject.GetComponent<SSH_Enemy2>();
+                enemy2.AddDamage(3);
             }
         }
     }

@@ -112,7 +112,7 @@ public class SH_PlayerMove : MonoBehaviour
             if (!walkSound.isPlaying)
             {
                 walkSound.pitch = 2;  // 기본 animation = Run이므로 기본 재생속도 2
-                walkSound.Play();
+                walkSound.Play();  
             }
         }
         else

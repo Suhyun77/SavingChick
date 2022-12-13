@@ -355,7 +355,6 @@ public class SSH_Enemybeta : MonoBehaviour
         // Attack : Enemy 앞에 공격 효과 만들기
         if (other.gameObject.name == "Weapon" && SH_PlayerAttack.instance.anim.GetCurrentAnimatorStateInfo(0).IsName("Attack") == true)
         {
-            // getcomponent해서 만들어진 enemy의 attackPosition
             Vector3 pos = attackPosition.position;
             GameObject explosion = Instantiate(attackEffectFactory);
             explosion.transform.position = pos;

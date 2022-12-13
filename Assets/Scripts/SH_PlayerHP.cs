@@ -61,9 +61,7 @@ public class SH_PlayerHP : MonoBehaviour
             {
                 hp = 0;
             }
-
         }
-        
     }
 
     public void AddDamage(int damage)
@@ -71,18 +69,15 @@ public class SH_PlayerHP : MonoBehaviour
         if (HP > 0)
         {
             HP -= damage;
-            //StartCoroutine("IeAttacked");
-            StartCoroutine("IeRedChange");
+            StartCoroutine("IeAttacked");  // µÚ·Î ¹Ð·Á³²
+            StartCoroutine("IeRedChange");  // »¡°²°Ô º¯ÇÔ
             
-
             if (HP <= 0)
             {
                 anim.SetTrigger("Die");
                 SceneManager.LoadScene("GameOutScene");
             }
         }
-
-
     }
 
 
